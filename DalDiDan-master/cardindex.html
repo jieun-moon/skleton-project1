@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Insert title here</title>
+    <script src="https://unpkg.com/vue@2.3.3"></script>
+  </head>
+  <body>
+    <div id="list">
+      <ul v-for="item in items">
+        <li>{{item.no}}</li>
+        <li>{{item.nm}}</li>
+        <li>{{item.nl}}</li>
+      </ul>
+    </div>
+
+    <script>
+      var model = {
+        items: [
+          { no: 1, nm: 'K-패스카드', nl: '대중교통 10%할인' },
+          {
+            no: 2,
+            nm: 'T-ECONOMY KB국민카드',
+            nl: '통신요금 자동납부 1만 2천원 할인',
+          },
+          {
+            no: 3,
+            nm: '마이핏카드(할인형)',
+            nl: '외식/커피, 편의/생활, 쇼핑/배달 5%할인',
+          },
+          {
+            no: 4,
+            nm: '굿데이올림카드',
+            nl: '통신/교통 10% 청구할인, 대형마트 10% 청구할인',
+          },
+          {
+            no: 5,
+            nm: '골든라이프올림카드',
+            nl: '병원 or 마트 5% 청구할인',
+          },
+        ],
+      };
+      var List = new Vue({
+        el: '#list',
+        data: model,
+      });
+    </script>
+  </body>
+</html>
