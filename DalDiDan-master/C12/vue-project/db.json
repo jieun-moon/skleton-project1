@@ -1,0 +1,40 @@
+{
+  "incomes": [
+    {
+      "id": "416a",
+      "date": "2024-06-05",
+      "amount": 234234,
+      "source": "카페",
+      "memo": "음료"
+    },
+    {
+      "id": null,
+      "date": "2024-06-11",
+      "amount": 1231232,
+      "source": "버스",
+      "memo": "교통비"
+    },
+    {
+      "id": null,
+      "date": "2024-06-12",
+      "amount": 345345,
+      "source": "지하철",
+      "memo": "교통비"
+    },
+    {
+      "id": null,
+      "date": "2024-06-20",
+      "amount": 10000,
+      "source": "문구점",
+      "memo": "연필"
+    },
+    {
+      "id": null,
+      "date": "2024-06-20",
+      "amount": 50000,
+      "source": "pc방",
+      "memo": "겜"
+    }
+  ],
+  "expenditures": []
+}

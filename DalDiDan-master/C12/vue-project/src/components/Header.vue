@@ -18,18 +18,16 @@
           <router-link class="nav-link" to="/"> Home </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/about"
-            >Card Recommendation</router-link
-          >
+          <router-link class="nav-link" to="/about"> 카드 추천 </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/todos"> Budget </router-link>
+          <router-link class="nav-link" to="/money"> 예산 </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/todos"> Income </router-link>
+          <router-link class="nav-link" to="/income"> 수입 </router-link>
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/todos"> Expenditure </router-link>
+          <router-link class="nav-link" to="/expenditure"> 지출 </router-link>
         </li>
       </ul>
     </div>

@@ -7,25 +7,30 @@
 </template>
 
 <script setup>
-import { reactive, provide, computed } from 'vue';
+import { reactive, provide, ref, computed } from 'vue';
 import Header from '@/components/Header.vue';
 import Loading from '@/components/Loading.vue';
 import axios from 'axios';
 
-const owner = 'gdhong';
-const BASEURI = '/api/todolist_long';
+const BASEURI = 'http://localhost:3000'; // JSON Server URL
 
-const states = reactive({ todoList: [], isLoading: false });
+const states = reactive({ isLoading: false });
 
-//TodoList 목록을 조회합니다.
-const fetchTodoList = async () => {
+// 수입 목록 상태 관리
+const incomeList = ref([]);
+
+// 지출 목록 상태 관리
+const expenditureList = ref([]);
+
+// 수입 목록을 조회합니다.
+const fetchIncomeList = async () => {
   states.isLoading = true;
   try {
-    const response = await axios.get(BASEURI + `/${owner}`);
+    const response = await axios.get(`${BASEURI}/incomes`);
     if (response.status === 200) {
-      states.todoList = response.data;
+      incomeList.value = response.data;
     } else {
-      alert('데이터 조회 실패');
+      alert('수입 데이터 조회 실패');
     }
   } catch (error) {
     alert('에러발생 :' + error);
@@ -33,72 +38,126 @@ const fetchTodoList = async () => {
   states.isLoading = false;
 };
 
-// 새로운 TodoItem을 추가합니다.
-const addTodo = async ({ todo, desc }, successCallback) => {
+// 지출 목록을 조회합니다.
+const fetchExpenditureList = async () => {
   states.isLoading = true;
   try {
-    const payload = { todo, desc };
-    const response = await axios.post(BASEURI + `/${owner}`, payload);
-    if (response.data.status === 'success') {
-      states.todoList.push({
-        id: response.data.item.id,
-        todo,
-        desc,
-        done: false,
-      });
+    const response = await axios.get(`${BASEURI}/expenditures`);
+    if (response.status === 200) {
+      expenditureList.value = response.data;
+    } else {
+      alert('지출 데이터 조회 실패');
+    }
+  } catch (error) {
+    alert('에러발생 :' + error);
+  }
+  states.isLoading = false;
+};
+
+// 새로운 수입 항목을 추가합니다.
+const addIncome = async (income, successCallback) => {
+  states.isLoading = true;
+  try {
+    const response = await axios.post(`${BASEURI}/incomes`, income);
+    if (response.status === 201) {
+      incomeList.value.push(response.data);
       successCallback();
     } else {
-      alert('Todo 추가 실패 : ' + response.data.message);
+      alert('수입 추가 실패');
     }
   } catch (error) {
     alert('에러발생 :' + error);
   }
   states.isLoading = false;
 };
-// 기존 TodoItem을 변경합니다.
-const updateTodo = async ({ id, todo, desc, done }, successCallback) => {
+
+// 새로운 지출 항목을 추가합니다.
+const addExpenditure = async (expenditure, successCallback) => {
   states.isLoading = true;
   try {
-    const payload = { todo, desc, done };
-    const response = await axios.put(BASEURI + `/${owner}/${id}`, payload);
-    if (response.data.status === 'success') {
-      let index = states.todoList.findIndex((todo) => todo.id === id);
-      states.todoList[index] = { id, todo, desc, done };
+    const response = await axios.post(`${BASEURI}/expenditures`, expenditure);
+    if (response.status === 201) {
+      expenditureList.value.push(response.data);
       successCallback();
     } else {
-      alert('Todo 변경 실패 : ' + response.data.message);
+      alert('지출 추가 실패');
     }
   } catch (error) {
     alert('에러발생 :' + error);
   }
   states.isLoading = false;
 };
-//기존 TodoItem을 삭제합니다.
-const deleteTodo = async (id) => {
+
+// 수입 항목을 삭제합니다.
+const deleteIncome = async (id) => {
   states.isLoading = true;
   try {
-    const response = await axios.delete(BASEURI + `/${owner}/${id}`);
-    if (response.data.status === 'success') {
-      let index = states.todoList.findIndex((todo) => todo.id === id);
-      states.todoList.splice(index, 1);
+    const response = await axios.delete(`${BASEURI}/incomes/${id}`);
+    if (response.status === 200) {
+      const index = incomeList.value.findIndex((income) => income.id === id);
+      incomeList.value.splice(index, 1);
     } else {
-      alert('Todo 삭제 실패 : ' + response.data.message);
+      alert('수입 삭제 실패');
     }
   } catch (error) {
     alert('에러발생 :' + error);
   }
   states.isLoading = false;
 };
-//기존 TodoItem의 완료여부(done) 값을 토글합니다.
-const toggleDone = async (id) => {
+
+// 지출 항목을 삭제합니다.
+const deleteExpenditure = async (id) => {
   states.isLoading = true;
   try {
-    const response = await axios.put(BASEURI + `/${owner}/${id}/done`);
-    if (response.data.status === 'success') {
-      let index = states.todoList.findIndex((todo) => todo.id === id);
-      states.todoList[index].done = !states.todoList[index].done;
+    const response = await axios.delete(`${BASEURI}/expenditures/${id}`);
+    if (response.status === 200) {
+      const index = expenditureList.value.findIndex(
+        (expenditure) => expenditure.id === id
+      );
+      expenditureList.value.splice(index, 1);
     } else {
-      alert('Todo 완료 변경 실패 : ' + response.data.message);
+      alert('지출 삭제 실패');
+    }
+  } catch (error) {
+    alert('에러발생 :' + error);
+  }
+  states.isLoading = false;
+};
+
+// 수입 항목을 업데이트합니다.
+const updateIncome = async (income, successCallback) => {
+  states.isLoading = true;
+  try {
+    const response = await axios.put(`${BASEURI}/incomes/${income.id}`, income);
+    if (response.status === 200) {
+      const index = incomeList.value.findIndex((i) => i.id === income.id);
+      incomeList.value[index] = income;
+      successCallback();
+    } else {
+      alert('수입 변경 실패');
+    }
+  } catch (error) {
+    alert('에러발생 :' + error);
+  }
+  states.isLoading = false;
+};
+
+// 지출 항목을 업데이트합니다.
+const updateExpenditure = async (expenditure, successCallback) => {
+  states.isLoading = true;
+  try {
+    const response = await axios.put(
+      `${BASEURI}/expenditures/${expenditure.id}`,
+      expenditure
+    );
+    if (response.status === 200) {
+      const index = expenditureList.value.findIndex(
+        (e) => e.id === expenditure.id
+      );
+      expenditureList.value[index] = expenditure;
+      successCallback();
+    } else {
+      alert('지출 변경 실패');
     }
   } catch (error) {
     alert('에러발생 :' + error);
@@ -107,10 +166,25 @@ const toggleDone = async (id) => {
 };
 
 provide(
-  'todoList',
-  computed(() => states.todoList)
+  'incomeList',
+  computed(() => incomeList.value)
 );
-provide('actions', { addTodo, deleteTodo, updateTodo, fetchTodoList });
+provide(
+  'expenditureList',
+  computed(() => expenditureList.value)
+);
+provide('actions', {
+  fetchIncomeList,
+  fetchExpenditureList,
+  addIncome,
+  addExpenditure,
+  deleteIncome,
+  deleteExpenditure,
+  updateIncome,
+  updateExpenditure,
+});
 
-fetchTodoList();
+// 데이터 초기화
+fetchIncomeList();
+fetchExpenditureList();
 </script>
