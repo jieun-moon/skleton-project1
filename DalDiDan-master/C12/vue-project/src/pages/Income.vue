@@ -62,12 +62,12 @@
       <div class="col">
         <h2>수입 리스트</h2>
         <ul>
-          <li v-for="incomeItem in incomeList" :key="incomeItem.id">
-            {{ incomeItem.date }} - {{ incomeItem.amount }} -
-            {{ incomeItem.source }} - {{ incomeItem.memo }}
-            <button @click="removeIncome(incomeItem.id)">삭제</button>
-            <button @click="editIncome(incomeItem)">편집</button>
-          </li>
+          <TodoItem
+            v-for="incomeItem in incomeList"
+            :key="incomeItem.id"
+            :item="incomeItem"
+            type="income"
+          />
         </ul>
       </div>
     </div>
@@ -76,17 +76,11 @@
 
 <script setup>
 import { reactive, inject } from 'vue';
-import axios from 'axios';
-
-const BASEURI = 'http://localhost:3000'; // JSON Server URL
+import TodoItem from '@/components/TodoItem.vue';
 
 const incomeList = inject('incomeList'); // 상태 주입
-const {
-  addIncome,
-  deleteIncome: removeIncomeFromServer,
-  updateIncome,
-  fetchIncomeList,
-} = inject('actions');
+const { addIncome, deleteIncome, updateIncome, fetchIncomeList } =
+  inject('actions');
 
 const income = reactive({
   date: '',
@@ -113,25 +107,6 @@ const saveIncome = async () => {
     alert('오류가 발생했습니다. 다시 시도해주세요.');
     console.error(error);
   }
-};
-
-// 수입 항목 삭제
-const removeIncome = async (id) => {
-  try {
-    await removeIncomeFromServer(id);
-    await fetchIncomeList();
-  } catch (error) {
-    console.error('Error deleting income:', error);
-  }
-};
-
-// 수입 항목 편집
-const editIncome = (incomeToEdit) => {
-  income.date = incomeToEdit.date;
-  income.amount = incomeToEdit.amount;
-  income.source = incomeToEdit.source;
-  income.memo = incomeToEdit.memo;
-  income.id = incomeToEdit.id;
 };
 
 // 폼 초기화
