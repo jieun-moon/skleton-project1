@@ -1,10 +1,14 @@
 import { createStore } from 'vuex';
+import axios from 'axios';
 
 export default createStore({
   state: {
     transactions: {}, // 날짜별 수입/지출 내역
   },
   mutations: {
+    setTransactions(state, transactions) {
+      state.transactions = transactions;
+    },
     addTransaction(state, transaction) {
       const date = transaction.date;
       if (!state.transactions[date]) {
@@ -17,11 +21,35 @@ export default createStore({
     },
   },
   actions: {
-    addTransaction({ commit }, transaction) {
-      commit('addTransaction', transaction);
+    async fetchTransactions({ commit }) {
+      try {
+        const response = await axios.get('http://localhost:3000/transactions');
+        commit('setTransactions', response.data);
+      } catch (error) {
+        console.error('Failed to fetch transactions:', error);
+      }
     },
-    updateTransactions({ commit }, payload) {
-      commit('updateTransactions', payload);
+    async addTransaction({ commit }, transaction) {
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/transactions',
+          transaction
+        );
+        commit('addTransaction', response.data);
+      } catch (error) {
+        console.error('Failed to add transaction:', error);
+      }
+    },
+    async updateTransactions({ commit }, payload) {
+      try {
+        await axios.put(
+          `http://localhost:3000/transactions/${payload.date}`,
+          payload.transactions
+        );
+        commit('updateTransactions', payload);
+      } catch (error) {
+        console.error('Failed to update transactions:', error);
+      }
     },
   },
   getters: {

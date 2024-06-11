@@ -72,6 +72,37 @@
           </button>
         </li>
       </ul>
+      <div v-if="isEditing">
+        <h3>편집</h3>
+        <div class="mb-3">
+          <label for="edit-amount" class="form-label">금액:</label>
+          <input
+            v-model.number="editTransactionData.amount"
+            type="number"
+            id="edit-amount"
+            class="form-control"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="edit-source" class="form-label">사용처:</label>
+          <input
+            v-model="editTransactionData.source"
+            type="text"
+            id="edit-source"
+            class="form-control"
+          />
+        </div>
+        <div class="mb-3">
+          <label for="edit-memo" class="form-label">메모:</label>
+          <textarea
+            v-model="editTransactionData.memo"
+            id="edit-memo"
+            class="form-control"
+          ></textarea>
+        </div>
+        <button @click="saveTransaction" class="btn btn-success">저장</button>
+        <button @click="cancelEdit" class="btn btn-secondary">취소</button>
+      </div>
     </div>
   </div>
 </template>
@@ -87,6 +118,14 @@ export default {
       days: [],
       dayNames: ['일', '월', '화', '수', '목', '금', '토'],
       selectedDate: null,
+      isEditing: false,
+      editTransactionData: {
+        amount: 0,
+        source: '',
+        memo: '',
+        type: '',
+      },
+      editIndex: null,
     };
   },
   computed: {
@@ -94,7 +133,11 @@ export default {
     ...mapGetters(['transactionsByDate']),
   },
   methods: {
-    ...mapActions(['addTransaction', 'updateTransactions']),
+    ...mapActions([
+      'addTransaction',
+      'updateTransactions',
+      'fetchTransactions',
+    ]),
     generateCalendar() {
       const date = new Date(this.year, this.month - 1, 1);
       const days = [];
@@ -111,6 +154,7 @@ export default {
     selectDay(day) {
       if (day) {
         this.selectedDate = this.formatDate(this.year, this.month, day);
+        this.isEditing = false;
       }
     },
     formatDate(year, month, day) {
@@ -119,8 +163,29 @@ export default {
         '0'
       )}`;
     },
+    editTransaction(index) {
+      this.isEditing = true;
+      this.editIndex = index;
+      const transaction = this.transactionsByDate[this.selectedDate][index];
+      this.editTransactionData = { ...transaction };
+    },
+    saveTransaction() {
+      const transactions = [...this.transactionsByDate[this.selectedDate]];
+      transactions[this.editIndex] = this.editTransactionData;
+      this.updateTransactions({ date: this.selectedDate, transactions });
+      this.isEditing = false;
+    },
+    cancelEdit() {
+      this.isEditing = false;
+    },
+    deleteTransaction(index) {
+      const transactions = [...this.transactionsByDate[this.selectedDate]];
+      transactions.splice(index, 1);
+      this.updateTransactions({ date: this.selectedDate, transactions });
+    },
   },
   mounted() {
+    this.fetchTransactions();
     this.generateCalendar();
   },
 };
