@@ -1,83 +1,76 @@
 <template>
-  <div class="row">
-    <div class="col p-3">
-      <h2>할일 수정</h2>
+  <div>
+    <h2>지출 입력</h2>
+    <div class="mb-3">
+      <label for="date" class="form-label">날짜:</label>
+      <input
+        v-model="transaction.date"
+        type="date"
+        id="date"
+        class="form-control"
+      />
     </div>
-  </div>
-  <div class="row">
-    <div class="col">
-      <div class="form-group">
-        <label htmlFor="todo">할일:</label>
-        <input
-          type="text"
-          class="form-control"
-          id="todo"
-          v-model="todoItem.todo"
-        />
-      </div>
-      <div class="form-group">
-        <label htmlFor="desc">설명:</label>
-        <textarea
-          class="form-control"
-          rows="3"
-          id="desc"
-          v-model="todoItem.desc"
-        ></textarea>
-      </div>
-      <div class="form-group">
-        <label htmlFor="done">완료여부 : </label>&nbsp;
-        <input type="checkbox" v-model="todoItem.done" />
-      </div>
-      <div class="form-group">
-        <button
-          type="button"
-          class="btn btn-primary m-1"
-          @click="updateTodoHandler"
-        >
-          수 정
-        </button>
-        <button
-          type="button"
-          class="btn btn-primary m-1"
-          @click="router.push('/money')"
-        >
-          취 소
-        </button>
-      </div>
+    <div class="mb-3">
+      <label for="amount" class="form-label">금액:</label>
+      <input
+        v-model.number="transaction.amount"
+        type="number"
+        id="amount"
+        class="form-control"
+      />
     </div>
+    <div class="mb-3">
+      <label for="source" class="form-label">사용처:</label>
+      <input
+        v-model="transaction.source"
+        type="text"
+        id="source"
+        class="form-control"
+      />
+    </div>
+    <div class="mb-3">
+      <label for="memo" class="form-label">메모:</label>
+      <textarea
+        v-model="transaction.memo"
+        id="memo"
+        class="form-control"
+      ></textarea>
+    </div>
+    <button @click="handleAddTransaction" class="btn btn-success">저장</button>
   </div>
 </template>
 
-<script setup>
-import { inject, reactive } from 'vue';
-import { useRouter, useRoute } from 'vue-router';
+<script>
+import { mapActions } from 'vuex';
 
-const router = useRouter();
-const currentRoute = useRoute();
-
-const todoList = inject('todoList');
-const { updateTodo } = inject('actions');
-
-console.log(todoList);
-
-const matchedTodoItem = todoList.value.find(
-  (item) => item.id === parseInt(currentRoute.params.id)
-);
-if (!matchedTodoItem) {
-  router.push('/money');
-}
-const todoItem = reactive({ ...matchedTodoItem });
-
-const updateTodoHandler = () => {
-  let { todo } = todoItem;
-  if (!todo || todo.trim() === '') {
-    alert('할일은 반드시 입력해야 합니다');
-    return;
-  }
-  updateTodo({ ...todoItem }, () => {
-    router.push('/money');
-  });
+export default {
+  data() {
+    return {
+      transaction: {
+        date: '',
+        amount: 0,
+        source: '',
+        memo: '',
+        type: 'expense',
+      },
+    };
+  },
+  methods: {
+    ...mapActions(['addTransaction']),
+    handleAddTransaction() {
+      if (this.transaction.date && this.transaction.amount) {
+        this.addTransaction(this.transaction);
+        this.clearForm();
+      } else {
+        alert('날짜와 금액을 입력해주세요.');
+      }
+    },
+    clearForm() {
+      this.transaction.date = '';
+      this.transaction.amount = 0;
+      this.transaction.source = '';
+      this.transaction.memo = '';
+    },
+  },
 };
 </script>
-
-<style scoped></style>

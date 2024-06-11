@@ -14,8 +14,8 @@ const router = createRouter({
     { path: '/cardRecommendation', component: CardRecommendation },
     { path: '/money', component: TodoList },
     { path: '/budget', component: Budget },
-    { path: '/income/:id', component: Income },
-    { path: '/expenditure/:id', component: Expenditure },
+    { path: '/income', component: Income },
+    { path: '/expenditure', component: Expenditure },
     { path: '/:paths(.*)*', component: NotFound },
   ],
 });
