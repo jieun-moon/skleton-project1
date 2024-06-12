@@ -1,0 +1,124 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "date": "2024-01-05",
+      "type": "expense",
+      "category": "식비",
+      "amount": 100000,
+      "memo": "세광양대창"
+    },
+    {
+      "id": "2",
+      "date": "2024-01-10",
+      "type": "expense",
+      "category": "도서",
+      "amount": 40500,
+      "memo": "모던 자바스크립트"
+    },
+    {
+      "id": "3",
+      "date": "2024-02-02",
+      "type": "expense",
+      "category": "식비",
+      "amount": 50000,
+      "memo": "회식"
+    },
+    {
+      "id": "4",
+      "date": "2024-02-02",
+      "type": "expense",
+      "category": "간식",
+      "amount": 500,
+      "memo": "아이스크림"
+    },
+    {
+      "id": "5",
+      "date": "2024-02-02",
+      "type": "expense",
+      "category": "여행",
+      "amount": 1055000,
+      "memo": "일본여행"
+    },
+    {
+      "id": "6",
+      "date": "2024-02-02",
+      "type": "expense",
+      "category": "미용",
+      "amount": 155000,
+      "memo": "미용실"
+    },
+    {
+      "id": "7",
+      "date": "2024-02-02",
+      "type": "expense",
+      "category": "도서",
+      "amount": 75000,
+      "memo": "자율주행차량 운전주행모드 자동 전환용 인식률 90% 이상의 다중 센서 기반 운전자 상태 인식 및 상황 인식 원천 기술 개발"
+    },
+    {
+      "id": "8",
+      "date": "2024-10-05",
+      "type": "expense",
+      "category": "봉사",
+      "amount": 155000,
+      "memo": "빨래 봉사"
+    },
+    {
+      "id": "9",
+      "date": "2024-06-01",
+      "type": "income",
+      "category": "a",
+      "amount": 5000000,
+      "memo": "월급 수령"
+    },
+    {
+      "id": "10",
+      "date": "2024-06-02",
+      "type": "expense",
+      "category": "a",
+      "amount": 300000,
+      "memo": "식료품 구매"
+    },
+    {
+      "id": "11",
+      "date": "2024-06-03",
+      "type": "income",
+      "category": "c",
+      "amount": 200000,
+      "memo": "주식 배당금 수령"
+    },
+    {
+      "id": "2d5a",
+      "date": "2024-06-12",
+      "type": "income",
+      "category": "",
+      "amount": 200000,
+      "memo": "ㅁㄴ아ㅓㅁ니아ㅓ"
+    },
+    {
+      "id": "4785",
+      "date": "2024-06-12",
+      "type": "expense",
+      "category": "food",
+      "amount": 234455666,
+      "memo": ""
+    },
+    {
+      "id": "1e6f",
+      "date": "2024-06-13",
+      "type": "income",
+      "category": "",
+      "amount": 3400,
+      "memo": ""
+    },
+    {
+      "id": "3e8d",
+      "date": "2024-06-15",
+      "type": "income",
+      "category": "",
+      "amount": 60000,
+      "memo": ""
+    }
+  ]
+}
