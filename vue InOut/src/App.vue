@@ -7,10 +7,11 @@
 </template>
 
 <script setup>
-import { reactive, computed } from 'vue';
+import { reactive, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import Header from '@/components/Header.vue';
 import Loading from '@/components/Loading.vue';
+import axios from 'axios';
 
 const states = reactive({ isLoading: false });
 const transactions = reactive({});
@@ -31,6 +32,18 @@ const routerViewProps = computed(() => {
     };
   }
   return {};
+});
+
+onMounted(async () => {
+  try {
+    states.isLoading = true;
+    const response = await axios.get('http://localhost:3000/transactions'); // db.json URL에 맞게 수정
+    Object.assign(transactions, response.data);
+  } catch (error) {
+    console.error('Error loading transactions:', error);
+  } finally {
+    states.isLoading = false;
+  }
 });
 </script>
 

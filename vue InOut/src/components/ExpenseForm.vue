@@ -226,6 +226,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   props: ['transactions'],
   data() {
@@ -268,8 +270,7 @@ export default {
       return [...this.incomeCategories, ...this.expenseCategories];
     },
     uniqueDates() {
-      const dates = Object.keys(this.transactions);
-      return dates;
+      return Object.keys(this.transactions);
     },
     filteredExpenses() {
       const expenses = Object.values(this.transactions).flat();
@@ -348,12 +349,21 @@ export default {
         this.imageUrl = null;
       }
     },
-    handleSubmit() {
+    async handleSubmit() {
       if (!this.selectedCategory) {
         alert('카테고리를 선택해 주세요.');
         return;
       }
-
+      try {
+        const response = await axios.post(
+          'http://localhost:3000/transactions',
+          formData
+        ); // db.json URL에 맞게 수정
+        this.$emit('add-transaction', this.date, response.data);
+        this.resetForm();
+      } catch (error) {
+        console.error('Error submitting transaction:', error);
+      }
       const formData = {
         date: this.date,
         type: this.mode,
