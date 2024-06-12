@@ -154,6 +154,33 @@
       "amount": 10000,
       "memo": "",
       "usage": ""
+    },
+    {
+      "id": "6324",
+      "date": "2024-06-20",
+      "type": "income",
+      "category": "용돈",
+      "amount": 234234324,
+      "memo": "ㄴㅇㄹㄴㅇㄹㅇㄴ",
+      "usage": ""
+    },
+    {
+      "id": "ffe0",
+      "date": "2024-06-12",
+      "type": "expense",
+      "category": "문화생활",
+      "amount": 112312321,
+      "memo": "ㄴㅇㄹㄴㅇㄹㄴㅇㄹ",
+      "usage": "푸ㅠ푸퓨ㅜ"
+    },
+    {
+      "id": "5195",
+      "date": "2024-06-13",
+      "type": "income",
+      "category": "기타",
+      "amount": 200000,
+      "memo": "ㅔ배저뎀ㄹㅇ니ㅓ;ㅏ",
+      "usage": ""
     }
   ]
 }
