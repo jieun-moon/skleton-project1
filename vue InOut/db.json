@@ -119,6 +119,41 @@
       "category": "",
       "amount": 60000,
       "memo": ""
+    },
+    {
+      "id": "4154",
+      "date": "2024-06-25",
+      "type": "income",
+      "category": "월급",
+      "amount": 2500000,
+      "memo": ""
+    },
+    {
+      "id": "4323",
+      "date": "2024-06-12",
+      "type": "expense",
+      "category": "미용",
+      "amount": 160000,
+      "memo": "커트",
+      "usage": "준오헤어"
+    },
+    {
+      "id": "fb8f",
+      "date": "2024-06-05",
+      "type": "income",
+      "category": "월급",
+      "amount": 100000000,
+      "memo": "",
+      "usage": ""
+    },
+    {
+      "id": "1d03",
+      "date": "2024-06-05",
+      "type": "income",
+      "category": "코인",
+      "amount": 10000,
+      "memo": "",
+      "usage": ""
     }
   ]
 }

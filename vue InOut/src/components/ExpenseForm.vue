@@ -6,31 +6,32 @@
           <div class="buttons mb-3">
             <button
               :class="{ active: mode === 'income' }"
-              @click="mode = 'income'"
+              @click="setMode('income')"
             >
               수입
             </button>
             <button
               :class="{ active: mode === 'expense' }"
-              @click="mode = 'expense'"
+              @click="setMode('expense')"
             >
               지출
             </button>
           </div>
           <div class="categories mb-3">
             <button
-              :class="{ active: category === 'salary' }"
-              @click="category = 'salary'"
+              v-for="category in currentCategories"
+              :key="category"
+              :class="{ active: selectedCategory === category }"
+              @click="selectedCategory = category"
             >
-              월급
+              {{ category }}
             </button>
             <button
-              :class="{ active: category === 'allowance' }"
-              @click="category = 'allowance'"
+              @click="showAddCategoryModal"
+              class="btn btn-secondary btn-sm"
             >
-              용돈
+              +
             </button>
-            <!-- Add more category buttons as needed -->
           </div>
           <div class="mb-3">
             <label for="date">날짜:</label>
@@ -47,30 +48,21 @@
             />
           </div>
           <div class="mb-3">
-            <label for="expense-category">카테고리:</label>
-            <select
-              id="expense-category"
-              v-model="expenseCategory"
-              class="form-control"
-            >
-              <option value="" disabled>=====선택=====</option>
-              <option value="food">음식</option>
-              <option value="transport">교통</option>
-              <option value="communication">통신</option>
-              <option value="utilities">공과금</option>
-              <option value="beauty">미용</option>
-              <option value="culture">문화생활</option>
-              <option value="education">교육</option>
-              <option value="hospital">병원</option>
-            </select>
-          </div>
-          <div class="mb-3">
             <label for="description">메모:</label>
             <textarea
               id="description"
               v-model="description"
               class="form-control"
             ></textarea>
+          </div>
+          <div class="mb-3" v-if="mode === 'expense'">
+            <label for="usage">사용처:</label>
+            <input
+              type="text"
+              id="usage"
+              v-model="usage"
+              class="form-control"
+            />
           </div>
           <div class="mb-3">
             <label for="file">이미지 첨부파일:</label>
@@ -100,6 +92,50 @@
         </div>
       </div>
       <div class="col-md-8">
+        <!-- 필터 드롭다운 및 정렬 드롭다운 -->
+        <div class="filters mb-3">
+          <select
+            v-model="filterDate"
+            class="form-control mb-2"
+            @change="applyFilters"
+          >
+            <option value="">날짜 선택</option>
+            <option v-for="date in uniqueDates" :key="date" :value="date">
+              {{ date }}
+            </option>
+          </select>
+          <select
+            v-model="filterType"
+            class="form-control mb-2"
+            @change="applyFilters"
+          >
+            <option value="">유형 선택</option>
+            <option value="income">수입</option>
+            <option value="expense">지출</option>
+          </select>
+          <select
+            v-model="filterCategory"
+            class="form-control mb-2"
+            @change="applyFilters"
+          >
+            <option value="">카테고리 선택</option>
+            <option
+              v-for="category in allCategories"
+              :key="category"
+              :value="category"
+            >
+              {{ category }}
+            </option>
+          </select>
+          <select
+            v-model="sortDirection"
+            class="form-control"
+            @change="applyFilters"
+          >
+            <option value="asc">오래된 순</option>
+            <option value="desc">최신 순</option>
+          </select>
+        </div>
         <table class="table mt-5">
           <thead>
             <tr>
@@ -109,19 +145,63 @@
               <th scope="col">카테고리</th>
               <th scope="col">금액</th>
               <th scope="col">메모</th>
+              <th scope="col">사용처</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="(item, index) in expenses" :key="item.id">
+            <tr v-for="(item, index) in sortedExpenses" :key="item.id">
               <th scope="row">{{ index + 1 }}</th>
               <td>{{ item.date }}</td>
               <td>{{ item.type }}</td>
               <td>{{ item.category }}</td>
               <td>{{ item.amount.toLocaleString() }}원</td>
               <td>{{ item.memo }}</td>
+              <td>{{ item.usage }}</td>
             </tr>
           </tbody>
         </table>
+      </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div
+      class="modal"
+      tabindex="-1"
+      :class="{ show: isModalVisible }"
+      style="display: block"
+      v-if="isModalVisible"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">카테고리 추가</h5>
+            <button
+              type="button"
+              class="btn-close"
+              @click="hideAddCategoryModal"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <input
+              type="text"
+              v-model="newCategory"
+              class="form-control"
+              placeholder="새 카테고리 이름"
+            />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-primary" @click="addCategory">
+              추가
+            </button>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              @click="hideAddCategoryModal"
+            >
+              취소
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -134,26 +214,98 @@ export default {
   data() {
     return {
       mode: 'income',
-      category: 'salary',
       date: '',
       amount: '',
       formattedAmount: '',
-      expenseCategory: '',
+      selectedCategory: '',
       description: '',
+      usage: '',
       file: null,
       imageUrl: null,
       expenses: [],
+      incomeCategories: ['용돈', '월급', '주식'],
+      expenseCategories: [
+        '음식',
+        '교통',
+        '통신',
+        '공과금',
+        '미용',
+        '문화생활',
+        '교육',
+        '병원',
+      ],
+      isModalVisible: false,
+      newCategory: '',
+      filterDate: '',
+      filterType: '',
+      filterCategory: '',
+      sortDirection: 'asc', // 추가된 데이터
     };
+  },
+  computed: {
+    currentCategories() {
+      return this.mode === 'income'
+        ? this.incomeCategories
+        : this.expenseCategories;
+    },
+    allCategories() {
+      return [...this.incomeCategories, ...this.expenseCategories];
+    },
+    uniqueDates() {
+      const dates = this.expenses.map((expense) => expense.date);
+      return [...new Set(dates)];
+    },
+    filteredExpenses() {
+      return this.expenses.filter((expense) => {
+        return (
+          (!this.filterDate || expense.date === this.filterDate) &&
+          (!this.filterType || expense.type === this.filterType) &&
+          (!this.filterCategory || expense.category === this.filterCategory)
+        );
+      });
+    },
+    sortedExpenses() {
+      return this.filteredExpenses.sort((a, b) => {
+        if (this.sortDirection === 'asc') {
+          return new Date(a.date) - new Date(b.date);
+        } else {
+          return new Date(b.date) - new Date(a.date);
+        }
+      });
+    },
   },
   async created() {
     try {
-      const response = await axios.get('http://localhost:3000/users');
+      const response = await axios.get('http://localhost:3000/users'); // JSON Server URL 수정
       this.expenses = response.data;
     } catch (error) {
       console.error('Error fetching expenses:', error);
     }
   },
   methods: {
+    setMode(mode) {
+      this.mode = mode;
+      this.selectedCategory = ''; // 모드를 변경할 때 선택된 카테고리 초기화
+    },
+    showAddCategoryModal() {
+      this.isModalVisible = true;
+    },
+    hideAddCategoryModal() {
+      this.isModalVisible = false;
+      this.newCategory = '';
+    },
+    addCategory() {
+      if (!this.newCategory) {
+        alert('카테고리 이름을 입력해 주세요.');
+        return;
+      }
+      if (this.mode === 'income') {
+        this.incomeCategories.push(this.newCategory);
+      } else {
+        this.expenseCategories.push(this.newCategory);
+      }
+      this.hideAddCategoryModal();
+    },
     formatAmount() {
       const numericValue = this.formattedAmount.replace(/\D/g, '');
       this.formattedAmount = numericValue.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -174,19 +326,25 @@ export default {
       }
     },
     async handleSubmit() {
+      if (!this.selectedCategory) {
+        alert('카테고리를 선택해 주세요.');
+        return;
+      }
+
       const formData = {
         date: this.date,
         type: this.mode,
-        category: this.expenseCategory,
+        category: this.selectedCategory,
         amount: parseInt(this.amount, 10),
         memo: this.description,
+        usage: this.usage,
       };
 
       try {
         const response = await axios.post(
           'http://localhost:3000/users',
           formData
-        );
+        ); // JSON Server URL 수정
         alert('데이터가 성공적으로 추가되었습니다.');
         this.expenses.push(response.data);
         this.resetForm();
@@ -200,14 +358,21 @@ export default {
     },
     resetForm() {
       this.mode = 'income';
-      this.category = 'salary';
       this.date = '';
       this.amount = '';
       this.formattedAmount = '';
-      this.expenseCategory = '';
+      this.selectedCategory = '';
       this.description = '';
+      this.usage = '';
       this.file = null;
       this.imageUrl = null;
+    },
+    applyFilters() {
+      this.sortedExpenses;
+    },
+    sortByDate(direction) {
+      this.sortDirection = direction;
+      this.applyFilters();
     },
   },
 };
@@ -249,5 +414,32 @@ export default {
 .action-buttons {
   display: flex;
   justify-content: space-between;
+}
+
+.filters {
+  display: flex;
+  justify-content: space-between;
+}
+
+.filters select {
+  margin-right: 10px;
+}
+
+.modal.show {
+  display: block;
+  background: rgba(0, 0, 0, 0.5);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1050;
+}
+
+.modal-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }
 </style>
