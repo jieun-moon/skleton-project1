@@ -1,26 +1,35 @@
 <template>
-    <div id="app">
-        <ExpenseForm />
-    </div>
+  <div id="app">
+    <ExpenseForm
+      :transactions="transactions"
+      @add-transaction="addTransaction"
+    />
+  </div>
 </template>
 
 <script>
 import ExpenseForm from '../components/ExpenseForm.vue';
 
 export default {
-    name: 'App',
-    components: {
-        ExpenseForm,
+  name: 'InOut',
+  props: ['transactions'],
+  components: {
+    ExpenseForm,
+  },
+  methods: {
+    addTransaction(date, transaction) {
+      this.$emit('update-transactions', date, transaction);
     },
+  },
 };
 </script>
 
 <style>
 #app {
-    font-family: Avenir, Helvetica, Arial, sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-align: center;
-    color: #2c3e50;
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-align: center;
+  color: #2c3e50;
 }
 </style>

@@ -6,17 +6,18 @@ import NotFound from '@/pages/NotFound.vue';
 import InOut from '@/pages/InOut.vue';
 import ListView from '@/pages/ListView.vue';
 
+const routes = [
+  { path: '/', component: Home },
+  { path: '/cardRecommendation', component: CardRecommendation },
+  { path: '/money', component: TodoList },
+  { path: '/:paths(.*)*', component: NotFound },
+  { path: '/inOut', component: InOut, meta: { needsTransactions: true } },
+  { path: '/ListView', component: ListView },
+];
+
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
-    routes: [
-        { path: '/', component: Home },
-        { path: '/cardRecommendation', component: CardRecommendation },
-        { path: '/money', component: TodoList },
-        { path: '/:paths(.*)*', component: NotFound },
-        { path: '/InOut', component: InOut },
-        { path: '/ListView', component: ListView },
-        // { path: '/TotalIncome', component: TotalIncome },
-    ],
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes,
 });
 
 export default router;

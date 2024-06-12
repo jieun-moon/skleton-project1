@@ -3,7 +3,7 @@
     <div class="row">
       <div class="col-md-4">
         <div class="form-container">
-          <div class="buttons mb-3">
+          <div class="buttons mb-3 text-center">
             <button
               :class="{ active: mode === 'income' }"
               @click="setMode('income')"
@@ -17,7 +17,7 @@
               지출
             </button>
           </div>
-          <div class="categories mb-3">
+          <div class="categories mb-3 text-center">
             <button
               v-for="category in currentCategories"
               :key="category"
@@ -33,11 +33,11 @@
               +
             </button>
           </div>
-          <div class="mb-3">
+          <div class="mb-3 text-center">
             <label for="date">날짜:</label>
             <input type="date" id="date" v-model="date" class="form-control" />
           </div>
-          <div class="mb-3">
+          <div class="mb-3 text-center">
             <label for="amount">금액:</label>
             <input
               type="text"
@@ -47,7 +47,7 @@
               class="form-control"
             />
           </div>
-          <div class="mb-3">
+          <div class="mb-3 text-center">
             <label for="description">메모:</label>
             <textarea
               id="description"
@@ -55,7 +55,7 @@
               class="form-control"
             ></textarea>
           </div>
-          <div class="mb-3" v-if="mode === 'expense'">
+          <div class="mb-3 text-center" v-if="mode === 'expense'">
             <label for="usage">사용처:</label>
             <input
               type="text"
@@ -64,7 +64,7 @@
               class="form-control"
             />
           </div>
-          <div class="mb-3">
+          <div class="mb-3 text-center">
             <label for="file">이미지 첨부파일:</label>
             <input
               type="file"
@@ -74,14 +74,14 @@
               class="form-control"
             />
           </div>
-          <div v-if="imageUrl" class="mb-3">
+          <div v-if="imageUrl" class="mb-3 text-center">
             <img
               :src="imageUrl"
               alt="첨부 이미지"
               style="max-width: 100%; margin-top: 10px"
             />
           </div>
-          <div class="action-buttons">
+          <div class="action-buttons text-center">
             <button @click="handleSubmit" class="btn btn-primary me-2">
               추가
             </button>
@@ -146,6 +146,7 @@
               <th scope="col">금액</th>
               <th scope="col">메모</th>
               <th scope="col">사용처</th>
+              <th scope="col">영수증 내역</th>
             </tr>
           </thead>
           <tbody>
@@ -154,9 +155,26 @@
               <td>{{ item.date }}</td>
               <td>{{ item.type }}</td>
               <td>{{ item.category }}</td>
-              <td>{{ item.amount.toLocaleString() }}원</td>
+              <td>{{ item.amount ? item.amount.toLocaleString() : 0 }}원</td>
               <td>{{ item.memo }}</td>
               <td>{{ item.usage }}</td>
+              <td>
+                <img
+                  v-if="item.imageUrl"
+                  :src="item.imageUrl"
+                  alt="첨부 이미지"
+                  style="max-width: 100px"
+                />
+              </td>
+            </tr>
+            <!-- 총계 추가 -->
+            <tr>
+              <td colspan="2"><strong>총 수입</strong></td>
+              <td colspan="2">{{ totalIncome.toLocaleString() }}원</td>
+              <td colspan="2"><strong>총 지출</strong></td>
+              <td colspan="2">{{ totalExpense.toLocaleString() }}원</td>
+              <td colspan="2"><strong>총 잔액</strong></td>
+              <td colspan="2">{{ balance.toLocaleString() }}원</td>
             </tr>
           </tbody>
         </table>
@@ -208,9 +226,8 @@
 </template>
 
 <script>
-import axios from 'axios';
-
 export default {
+  props: ['transactions'],
   data() {
     return {
       mode: 'income',
@@ -222,7 +239,6 @@ export default {
       usage: '',
       file: null,
       imageUrl: null,
-      expenses: [],
       incomeCategories: ['용돈', '월급', '주식'],
       expenseCategories: [
         '음식',
@@ -252,11 +268,12 @@ export default {
       return [...this.incomeCategories, ...this.expenseCategories];
     },
     uniqueDates() {
-      const dates = this.expenses.map((expense) => expense.date);
-      return [...new Set(dates)];
+      const dates = Object.keys(this.transactions);
+      return dates;
     },
     filteredExpenses() {
-      return this.expenses.filter((expense) => {
+      const expenses = Object.values(this.transactions).flat();
+      return expenses.filter((expense) => {
         return (
           (!this.filterDate || expense.date === this.filterDate) &&
           (!this.filterType || expense.type === this.filterType) &&
@@ -273,15 +290,21 @@ export default {
         }
       });
     },
+    totalIncome() {
+      return this.filteredExpenses
+        .filter((expense) => expense.type === 'income')
+        .reduce((total, expense) => total + expense.amount, 0);
+    },
+    totalExpense() {
+      return this.filteredExpenses
+        .filter((expense) => expense.type === 'expense')
+        .reduce((total, expense) => total + expense.amount, 0);
+    },
+    balance() {
+      return this.totalIncome - this.totalExpense;
+    },
   },
-  async created() {
-    try {
-      const response = await axios.get('http://localhost:3000/users'); // JSON Server URL 수정
-      this.expenses = response.data;
-    } catch (error) {
-      console.error('Error fetching expenses:', error);
-    }
-  },
+
   methods: {
     setMode(mode) {
       this.mode = mode;
@@ -325,7 +348,7 @@ export default {
         this.imageUrl = null;
       }
     },
-    async handleSubmit() {
+    handleSubmit() {
       if (!this.selectedCategory) {
         alert('카테고리를 선택해 주세요.');
         return;
@@ -338,20 +361,11 @@ export default {
         amount: parseInt(this.amount, 10),
         memo: this.description,
         usage: this.usage,
+        imageUrl: this.imageUrl,
       };
 
-      try {
-        const response = await axios.post(
-          'http://localhost:3000/users',
-          formData
-        ); // JSON Server URL 수정
-        alert('데이터가 성공적으로 추가되었습니다.');
-        this.expenses.push(response.data);
-        this.resetForm();
-      } catch (error) {
-        console.error('Error submitting form:', error);
-        alert('데이터 추가 중 오류가 발생했습니다.');
-      }
+      this.$emit('update-transactions', this.date, formData);
+      this.resetForm();
     },
     handleCancel() {
       this.resetForm();
@@ -441,5 +455,15 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+label {
+  display: inline-block;
+  width: 100%;
+  text-align: center;
+}
+
+.form-control {
+  width: 100%;
 }
 </style>

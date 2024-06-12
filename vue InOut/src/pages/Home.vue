@@ -1,7 +1,6 @@
 <template>
   <div id="app">
     <h1>달력 및 가계부</h1>
-    <!-- 연도와 월 선택 -->
     <div id="header">
       <div class="selection">
         <label for="year">연도:</label>
@@ -16,24 +15,16 @@
       <button @click="generateCalendar">달력 생성</button>
     </div>
 
-    <!-- 상단에 플러스 버튼 추가 -->
     <div class="top-bar">
       <button @click="goToInOut" class="plus-button">+</button>
     </div>
-    <!-- 달력 및 기타 내용 -->
-    <div>
-      <!-- 달력 코드 -->
-    </div>
 
-    <!-- 달력 -->
     <div v-if="days.length">
       <h2>{{ year }}년 {{ month }}월</h2>
       <div class="calendar">
-        <!-- 요일 헤더 -->
         <div class="day-header" v-for="day in dayNames" :key="day">
           {{ day }}
         </div>
-        <!-- 각 날짜 -->
         <div
           class="day"
           v-for="(day, index) in days"
@@ -49,7 +40,6 @@
       </div>
     </div>
 
-    <!-- 거래 추가 -->
     <div v-if="selectedDate">
       <h2>{{ selectedDate }}에 거래 추가하기</h2>
       <div>
@@ -83,7 +73,6 @@
       </div>
     </div>
 
-    <!-- 전체 통계 -->
     <div class="total-wrapper">
       <div class="total-item">
         <h2>전체 총 수입: {{ totalIncome }}</h2>
@@ -100,13 +89,18 @@
 
 <script>
 export default {
+  props: {
+    transactions: {
+      type: Object,
+      default: () => ({}),
+    },
+  },
   data() {
     return {
       year: new Date().getFullYear(),
       month: new Date().getMonth() + 1,
       days: [],
       dayNames: ['일', '월', '화', '수', '목', '금', '토'],
-      transactions: {},
       selectedDate: null,
       amount: 0,
       type: 'income',
@@ -131,6 +125,7 @@ export default {
       );
     },
   },
+
   methods: {
     generateCalendar() {
       const date = new Date(this.year, this.month - 1, 1);
@@ -187,10 +182,10 @@ export default {
     calculateTotal(transactions, type) {
       return transactions
         .filter((transaction) => transaction.type === type)
-        .reduce((sum, transaction) => sum + transaction.amount, 0);
+        .reduce((sum, transaction) => sum + (transaction.amount || 0), 0);
     },
     goToInOut() {
-      this.$router.push({ path: '/InOut' });
+      this.$router.push({ path: '/inout' }); // Ensure the path matches the router setup
     },
   },
   mounted() {
