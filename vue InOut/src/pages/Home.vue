@@ -88,6 +88,8 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
   props: {
     transactions: {
@@ -127,6 +129,20 @@ export default {
   },
 
   methods: {
+    async fetchTransactions() {
+      try {
+        const response = await axios.get('http://localhost:3000/transactions'); // API 엔드포인트 확인
+        response.data.forEach((transaction) => {
+          if (!this.transactions[transaction.date]) {
+            this.transactions[transaction.date] = [];
+          }
+          this.transactions[transaction.date].push(transaction);
+        });
+        this.generateCalendar(); // 데이터를 불러온 후 달력을 업데이트합니다.
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+      }
+    },
     generateCalendar() {
       const date = new Date(this.year, this.month - 1, 1);
       const days = [];
@@ -165,18 +181,35 @@ export default {
         )}-${String(day).padStart(2, '0')}`;
       }
     },
-    addTransaction(category) {
+    async addTransaction(category) {
       if (this.selectedDate && this.amount > 0) {
-        if (!this.transactions[this.selectedDate]) {
-          this.transactions[this.selectedDate] = [];
-        }
-        this.transactions[this.selectedDate].push({
+        const newTransaction = {
+          date: this.selectedDate,
           amount: this.amount,
           type: this.type,
           category: category,
-        });
-        this.amount = 0;
-        this.generateCalendar(); // 달력을 다시 생성하여 거래 내역 업데이트
+        };
+
+        // 서버에 새로운 거래 추가
+        try {
+          const response = await axios.post(
+            'http://localhost:3000/transactions', // 실제 서버 URL에 맞게 수정
+            newTransaction
+          );
+
+          // 서버에서 받은 응답 데이터를 사용하여 거래 추가
+          const addedTransaction = response.data;
+
+          if (!this.transactions[this.selectedDate]) {
+            this.transactions[this.selectedDate] = [];
+          }
+          this.transactions[this.selectedDate].push(addedTransaction);
+
+          this.amount = 0;
+          this.generateCalendar(); // 달력을 다시 생성하여 거래 내역 업데이트
+        } catch (error) {
+          console.error('Error adding transaction:', error);
+        }
       }
     },
     calculateTotal(transactions, type) {
@@ -188,8 +221,9 @@ export default {
       this.$router.push({ path: '/inout' }); // Ensure the path matches the router setup
     },
   },
-  mounted() {
+  async mounted() {
     this.generateCalendar();
+    await this.addTransaction();
   },
 };
 </script>

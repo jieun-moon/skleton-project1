@@ -270,11 +270,21 @@ export default {
       return [...this.incomeCategories, ...this.expenseCategories];
     },
     uniqueDates() {
-      return Object.keys(this.transactions);
+      const dateSet = new Set();
+      Object.values(this.transactions)
+        .flat()
+        .forEach((expense) => {
+          const [year, month] = expense.date.split('-');
+          dateSet.add(`${year}-${month}`);
+        });
+      return Array.from(dateSet);
     },
+    // 다른 computed 속성은 그대로 유지
     filteredExpenses() {
       const expenses = Object.values(this.transactions).flat();
       return expenses.filter((expense) => {
+        const [year, month] = expense.date.split('-');
+        const filterYearMonth = this.filterDate.split('-');
         return (
           (!this.filterDate || expense.date === this.filterDate) &&
           (!this.filterType || expense.type === this.filterType) &&
@@ -294,12 +304,12 @@ export default {
     totalIncome() {
       return this.filteredExpenses
         .filter((expense) => expense.type === 'income')
-        .reduce((total, expense) => total + expense.amount, 0);
+        .reduce((total, expense) => total + (expense.amount || 0), 0);
     },
     totalExpense() {
       return this.filteredExpenses
         .filter((expense) => expense.type === 'expense')
-        .reduce((total, expense) => total + expense.amount, 0);
+        .reduce((total, expense) => total + (expense.amount || 0), 0);
     },
     balance() {
       return this.totalIncome - this.totalExpense;
