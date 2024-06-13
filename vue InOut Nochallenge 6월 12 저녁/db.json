@@ -1,0 +1,224 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "date": "2024-06-01",
+      "type": "income",
+      "category": "월급",
+      "amount": 5000000,
+      "memo": "월급 수령"
+    },
+    {
+      "id": "2",
+      "date": "2024-06-03",
+      "type": "income",
+      "category": "주식",
+      "amount": 200000,
+      "memo": "주식 배당금 수령"
+    },
+    {
+      "id": "3",
+      "date": "2024-06-04",
+      "type": "income",
+      "category": "용돈",
+      "amount": 200000,
+      "memo": "부모님께 용돈 받음"
+    },
+    {
+      "id": "731b",
+      "date": "2024-06-26",
+      "amount": 10000,
+      "type": "income",
+      "category": "용돈"
+    },
+    {
+      "id": "74a5",
+      "date": "2024-06-01",
+      "amount": 55550,
+      "type": "income",
+      "category": "용돈"
+    },
+    {
+      "id": "10a6",
+      "date": "2024-06-07",
+      "amount": 70000,
+      "type": "income",
+      "category": "월급"
+    }
+  ],
+  "expenditures": [
+    {
+      "id": "4",
+      "date": "2024-06-05",
+      "type": "expense",
+      "category": "식비",
+      "amount": 100000,
+      "memo": "세광양대창"
+    },
+    {
+      "id": "5",
+      "date": "2024-06-10",
+      "type": "expense",
+      "category": "도서",
+      "amount": 40500,
+      "memo": "모던 자바스크립트"
+    },
+    {
+      "id": "6",
+      "date": "2024-06-02",
+      "type": "expense",
+      "category": "식비",
+      "amount": 50000,
+      "memo": "회식"
+    },
+    {
+      "id": "7",
+      "date": "2024-06-14",
+      "type": "expense",
+      "category": "간식",
+      "amount": 500,
+      "memo": "아이스크림"
+    },
+    {
+      "id": "8",
+      "date": "2024-06-18",
+      "type": "expense",
+      "category": "여행",
+      "amount": 1055000,
+      "memo": "일본여행"
+    },
+    {
+      "id": "9",
+      "date": "2024-06-07",
+      "type": "expense",
+      "category": "미용",
+      "amount": 155000,
+      "memo": "미용실"
+    },
+    {
+      "id": "10",
+      "date": "2024-06-02",
+      "type": "expense",
+      "category": "도서",
+      "amount": 75000,
+      "memo": "자율주행차량 운전주행모드 자동 전환용 인식률 90% 이상의 다중 센서 기반 운전자 상태 인식 및 상황 인식 원천 기술 개발"
+    },
+    {
+      "id": "11",
+      "date": "2024-06-02",
+      "type": "expense",
+      "category": "통신",
+      "amount": 55000,
+      "memo": "핸드폰 요금"
+    },
+    {
+      "id": "12",
+      "date": "2024-06-06",
+      "type": "expense",
+      "category": "식비",
+      "amount": 50000,
+      "memo": "식료품 구매"
+    },
+    {
+      "id": "13",
+      "date": "2024-06-06",
+      "type": "expense",
+      "category": "문화생활",
+      "amount": 10000,
+      "memo": "루후바오 보러가기"
+    },
+    {
+      "id": "14",
+      "date": "2024-06-06",
+      "type": "expense",
+      "category": "교통",
+      "amount": 5000,
+      "memo": "지하철과 버스"
+    },
+    {
+      "id": "15",
+      "date": "2024-06-26",
+      "type": "expense",
+      "category": "통신",
+      "amount": 100000,
+      "memo": "인터넷 통신 이용료"
+    },
+    {
+      "id": "16",
+      "date": "2024-06-20",
+      "type": "expense",
+      "category": "미용",
+      "amount": 45000,
+      "memo": "네일 아트"
+    },
+    {
+      "id": "17",
+      "date": "2024-06-01",
+      "type": "expense",
+      "category": "공과금",
+      "amount": 100000,
+      "memo": "보험료"
+    },
+    {
+      "id": "18",
+      "date": "2024-06-24",
+      "type": "expense",
+      "category": "문화생활",
+      "amount": 80000,
+      "memo": "시카고 보기"
+    },
+    {
+      "id": "19",
+      "date": "2024-06-13",
+      "type": "expense",
+      "category": "교육",
+      "amount": 30000,
+      "memo": "펫푸드 원데이 클래스"
+    },
+    {
+      "id": "20",
+      "date": "2024-06-30",
+      "type": "expense",
+      "category": "병원",
+      "amount": 25000,
+      "memo": "이비인후과"
+    },
+    {
+      "id": "520d",
+      "date": "2024-06-01",
+      "type": "expense",
+      "category": "문화생활",
+      "amount": 150000,
+      "memo": "콘서트",
+      "usage": "인터파크",
+      "imageUrl": null
+    },
+    {
+      "id": "b531",
+      "date": "2024-06-01",
+      "type": "expense",
+      "category": "통신",
+      "amount": 100000,
+      "memo": "핸드폰",
+      "usage": "",
+      "imageUrl": null
+    },
+    {
+      "id": "b891",
+      "date": "2024-06-07",
+      "amount": 70000,
+      "type": "expense",
+      "category": "미용"
+    },
+    {
+      "id": "e983",
+      "date": "2024-07-01",
+      "type": "expense",
+      "category": "식비",
+      "amount": 10000,
+      "memo": "점심",
+      "usage": "구내식당",
+      "imageUrl": null
+    }
+  ]
+}
